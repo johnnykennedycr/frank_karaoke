@@ -3,6 +3,7 @@ import '../core/audio_preset.dart';
 import '../core/scoring_mode.dart';
 import '../features/audio/mic_capture_service.dart';
 import '../features/audio/pitch_oracle.dart';
+import '../features/tv/tv_sync_server.dart';
 import '../features/youtube/youtube_audio_service.dart';
 
 // YouTube
@@ -23,6 +24,9 @@ final currentScoreProvider = StateProvider<int>((ref) => 0);
 final calibratedNoiseGateProvider = StateProvider<double?>((ref) => null);
 final calibratedSingingThresholdProvider = StateProvider<double?>((ref) => null);
 
+// TV Mode
+final isTvConnectedProvider = StateProvider<bool>((ref) => false);
+
 // Services
 final youtubeAudioServiceProvider = Provider<YouTubeAudioService>((ref) {
   final service = YouTubeAudioService();
@@ -42,3 +46,9 @@ final pitchOracleProvider = Provider<PitchOracle>((ref) {
   return oracle;
 });
 
+final tvSyncServerProvider = Provider<TvSyncServer>((ref) {
+  final audioService = ref.watch(youtubeAudioServiceProvider);
+  final server = TvSyncServer(audioService: audioService);
+  ref.onDispose(server.dispose);
+  return server;
+});

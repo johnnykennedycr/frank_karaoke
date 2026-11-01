@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://samsung.tv/FrankKaraokeTV" version="0.5.0" viewmodes="fullscreen">
+  <access origin="*" subdomains="true"/>
+  <tizen:application id="FrnkKaraok.FrankKaraokeTV" package="FrnkKaraok" required_version="5.5" launch_mode="caller"/>
+  <content src="index.html"/>
+  <description>Frank Karaoke TV - Reprodutor de Karaoke e Pontuacao em Tempo Real para Samsung Tizen TV</description>
+  <feature name="http://tizen.org/feature/screen.size.all"/>
+  <icon src="icon.png"/>
+  <tizen:metadata key="http://samsung.com/tv/metadata/use.voiceguide" value="false"/>
+  <tizen:metadata key="http://samsung.com/tv/metadata/floating.navigation" value="false"/>
+  <name>Frank Karaoke TV</name>
+  <tizen:privilege name="http://tizen.org/privilege/internet"/>
+  <tizen:privilege name="http://tizen.org/privilege/network.get"/>
+  <tizen:privilege name="http://tizen.org/privilege/fullscreen"/>
+  <tizen:privilege name="http://tizen.org/privilege/system"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+  <tizen:privilege name="http://developer.samsung.com/privilege/productinfo"/>
+  <tizen:privilege name="http://developer.samsung.com/privilege/network.public"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.audio"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+  <tizen:profile name="tv-samsung"/>
+  <tizen:setting screen-orientation="landscape" context-menu="enable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable" pointing-device-support="enable"/>
+</widget>

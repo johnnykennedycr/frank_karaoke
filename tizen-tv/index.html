@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Frank Karaoke TV</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ==================== STANDBY / PAIRING SCREEN ==================== -->
+  <div id="standby-screen">
+    <div class="standby-header">
+      <div class="brand-row">
+        <img src="logo.png" alt="Frank Karaoke" class="brand-logo" onerror="this.style.display='none'">
+        <div class="tv-badge">TV EDITION • TIZEN OS</div>
+      </div>
+      <div id="conn-pill" class="conn-pill searching">
+        <div class="status-dot"></div>
+        <span id="conn-status-text">Procurando celular na rede Wi-Fi...</span>
+      </div>
+    </div>
+
+    <div class="standby-grid">
+      <!-- Left Card: Connection & Remote Input -->
+      <div class="card">
+        <div class="card-title">📺 Conexão com o Celular</div>
+        <div class="card-subtitle">
+          O app procura seu celular automaticamente na rede Wi-Fi. Se preferir, digite os últimos números do IP do celular (Código Rápido) ou o IP completo usando o controle remoto:
+        </div>
+
+        <div class="ip-display-row">
+          <div class="ip-input-box">
+            <span id="ip-input-value">192.168.1.</span>
+            <span id="ip-prefix-hint" class="ip-prefix-hint">Porta :8080</span>
+          </div>
+        </div>
+
+        <div class="keypad-grid" id="keypad-grid">
+          <button class="tv-btn focusable" data-key="1">1</button>
+          <button class="tv-btn focusable" data-key="2">2</button>
+          <button class="tv-btn focusable" data-key="3">3</button>
+          <button class="tv-btn focusable" data-key="backspace">⌫</button>
+
+          <button class="tv-btn focusable" data-key="4">4</button>
+          <button class="tv-btn focusable" data-key="5">5</button>
+          <button class="tv-btn focusable" data-key="6">6</button>
+          <button class="tv-btn focusable" data-key=".">.</button>
+
+          <button class="tv-btn focusable" data-key="7">7</button>
+          <button class="tv-btn focusable" data-key="8">8</button>
+          <button class="tv-btn focusable" data-key="9">9</button>
+          <button class="tv-btn focusable" data-key="0">0</button>
+
+          <button class="tv-btn primary action-row focusable" data-key="connect">🔗 Conectar ao Celular</button>
+          <button class="tv-btn action-row focusable" data-key="scan">🔍 Buscar Automaticamente</button>
+        </div>
+
+        <div id="scan-log" class="scan-status-text">
+          Dica: Abra o app <b>Frank Karaoke</b> no seu celular Android conectado ao mesmo Wi-Fi. O pareamento acontece automaticamente!
+        </div>
+      </div>
+
+      <!-- Right Card: Instructions & Live Mic Preview -->
+      <div class="card">
+        <div class="card-title">🎤 Como Cantar na TV</div>
+        <div class="card-subtitle">
+          A TV exibe a letra, toca a música e mostra sua pontuação em tempo real enquanto você canta pelo microfone do celular.
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Abra o Frank Karaoke no Celular</h4>
+              <p>O celular cria automaticamente o servidor local na sua rede Wi-Fi e se conecta com a TV.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Escolha qualquer música no YouTube</h4>
+              <p>Pesquise por "Nome da Música Karaoke" no celular. Ao tocar no vídeo, ele abrirá automaticamente aqui na TV!</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Cante pelo Microfone do Celular</h4>
+              <p>Use o celular como microfone sem fio e controle remoto (Pause, Reiniciar, Ajuste de Tom e Modos de Pontuação).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-mic-preview">
+          <div class="mic-preview-header">
+            <span class="mic-preview-title">TESTE DO MICROFONE EM TEMPO REAL</span>
+            <div class="settings-badges">
+              <span id="standby-mode-badge" class="badge-chip">Modo: Afinação</span>
+              <span id="standby-preset-badge" class="badge-chip">Mic: Sala</span>
+              <span id="standby-pitch-badge" class="badge-chip">Tom: 0</span>
+            </div>
+          </div>
+          <div class="mic-meter-row">
+            <div id="standby-note" class="standby-note-badge">--</div>
+            <div class="mic-bar-track">
+              <div id="standby-mic-bar" class="mic-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KARAOKE PLAYER & SCORING OVERLAY ==================== -->
+  <div id="player-screen">
+    <video id="fk-tv-video" playsinline preload="auto"></video>
+    <div id="fk-yt-iframe-container"></div>
+
+    <div id="fk-overlay">
+      <!-- Top HUD Bar -->
+      <div id="fk-top-bar">
+        <div id="fk-singer" class="top-song-pill">🎤 Carregando música...</div>
+        <div class="top-badges-right">
+          <div id="fk-tv-pitch-pill" class="hud-pill">TOM: 0</div>
+          <div id="fk-tv-conn-pill" class="hud-pill" style="color:#00ff88;border-color:rgba(0,255,136,0.4);">🎤 MIC CONECTADO</div>
+        </div>
+      </div>
+
+      <!-- Debug Info -->
+      <div id="fk-debug">aguardando voz...</div>
+
+      <!-- Pitch Trail Canvas (Bottom Left) -->
+      <canvas id="fk-pitch-canvas" width="640" height="160"></canvas>
+
+      <!-- Score & Note Box (Bottom Right) -->
+      <div id="fk-score-container">
+        <div id="fk-note-box">
+          <div id="fk-mic-dot"></div>
+          <div id="fk-note-label">--</div>
+        </div>
+
+        <div id="fk-score">
+          <div class="score-title-lbl">SCORE</div>
+          <div id="fk-mode-label">AFINAÇÃO</div>
+          <div id="fk-score-value">0</div>
+          <div id="fk-feedback"></div>
+          <div class="overall-row">
+            <div class="overall-lbl">OVERALL</div>
+            <div id="fk-overall-value">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Overlay -->
+    <div id="fk-processing">
+      <div class="spinner"></div>
+      <div id="fk-processing-msg">Carregando música na TV...</div>
+      <div id="fk-processing-sub">Preparando áudio e sincronizando microfone</div>
+    </div>
+
+    <!-- End-of-Song Celebration Modal -->
+    <div id="fk-celebration"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

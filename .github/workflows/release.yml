@@ -14,14 +14,14 @@ permissions:
   contents: write
 
 jobs:
-  build-android:
+  build-android-and-tizen:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # full history needed for git-based versionCode
+          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -55,53 +55,49 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Static analysis
+        run: flutter analyze
+
       - name: Run tests
         run: flutter test
 
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Rename APK
+      - name: Prepare Release Artifacts
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          [ -z "$VERSION" ] && VERSION="0.0.0"
+          [ -z "$VERSION" ] || [ "$VERSION" = "master" ] && VERSION="0.5.0-tizen"
           cp build/app/outputs/flutter-apk/app-release.apk \
             "FrankKaraoke-${VERSION}-android.apk"
+          cp tizen-tv/FrankKaraoke.wgt "FrankKaraoke-${VERSION}-tizen.wgt"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: FrankKaraoke-*-android.apk
-
-  create-release:
-    needs: [build-android]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-apk
-          path: artifacts
+          name: frank-karaoke-tizen-bundle
+          path: |
+            FrankKaraoke-*-android.apk
+            FrankKaraoke-*-tizen.wgt
 
       - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: "Frank Karaoke ${{ github.ref_name }}"
+          name: "Frank Karaoke + Samsung Tizen TV ${{ github.ref_name }}"
           body: |
-            ## Install
+            ## Frank Karaoke + Samsung Tizen TV Edition
 
-            1. Download `FrankKaraoke-*-android.apk`
-            2. Transfer to your Android device
-            3. Open the file and tap **Install**
-            4. Enable "Install from unknown sources" if prompted
-            5. Grant microphone permission on first use
-            6. Calibrate your mic in settings before singing
-          draft: true
+            ### 1. Celular Android (Controle + Microfone)
+            1. Baixe `FrankKaraoke-*-android.apk` e instale no seu celular Android.
+            2. Conceda a permissão de microfone ao abrir.
+
+            ### 2. TV Samsung (Tizen OS)
+            1. Instale `FrankKaraoke-*-tizen.wgt` na sua TV Samsung em Modo Desenvolvedor.
+            2. Com o celular e a TV no mesmo Wi-Fi, o pareamento acontece automaticamente!
+            3. Escolha qualquer música de karaokê no YouTube pelo celular: o vídeo, a letra e a pontuação em tempo real aparecerão na TV enquanto você canta pelo microfone do celular.
+          draft: false
           prerelease: false
-          files: artifacts/*
+          files: |
+            FrankKaraoke-*-android.apk
+            FrankKaraoke-*-tizen.wgt
