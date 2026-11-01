@@ -337,11 +337,14 @@ class TvSyncServer {
   }
 
   void sendProcessing(bool show, {String? message}) {
-    broadcast({
+    final payload = <String, dynamic>{
       'type': 'processing',
       'show': show,
-      if (message != null) 'message': message,
-    });
+    };
+    if (message != null) {
+      payload['message'] = message;
+    }
+    broadcast(payload);
   }
 
   void sendCelebration(int score) {
